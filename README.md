@@ -58,7 +58,8 @@ Commit all files and push. Pages publishes the site; the Action will refresh `in
 Open:
 
 ```
-https://<your-username>.github.io/ns-pebble-plain/
+https://<your-username>.github.io/<your-repo-name>/
+FOR EXAMPLE, MINE: https://djzeratul.github.io/ns-pebble-plain/
 ```
 
 * Pure HTML, no CSS or JS.
