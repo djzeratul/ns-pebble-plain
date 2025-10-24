@@ -17,7 +17,7 @@ Repo → **Settings → Pages**
   After you push once, your site will be at:
 
 ```
-https://<your-username>.github.io/ns-pebble-plain/
+https://<your-username>.github.io/<your-repo-name>/
 ```
 
 ## 3) Add these files from this repository, if you did not fork:
