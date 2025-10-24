@@ -2,6 +2,8 @@
 
 Builds a plain html file with the JSON data from your nightscout's pebble endpoint, for display on incredibly old browsers or whatever you want to do with the data.
 
+CAVEATS: This exposes your BG data to the world on a public website, so be sure you're aware of this before moving forward. The code makes it possible to bypass a site in private mode to show BG data on a public site, so be aware of the privacy implications before proceeding.
+
 ## 1) Make a public repo, fork this one if you want
 
 Name it something like `ns-pebble-plain`.
