@@ -18,7 +18,7 @@ Repo → **Settings → Pages**
 https://<your-username>.github.io/ns-pebble-plain/
 ```
 
-## 3) Add these files from this repository:
+## 3) Add these files from this repository, if you did not fork:
 
 ### `package.json`
 ### `scripts/build.js`
