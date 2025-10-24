@@ -1,5 +1,6 @@
 // Build a minimal, token-optional Nightscout /pebble HTML page
 // Ultra-compatible: ASCII arrows, cache-busting, robust TZ, smart unit handling.
+// Delta conversion is tied to SGV-inferred source units to avoid wrong ×18.
 
 import fs from "node:fs/promises";
 import moment from "moment-timezone";
@@ -85,7 +86,13 @@ function toNumber(x) {
   return Number.isFinite(n) ? n : NaN;
 }
 
-// Looks-like helpers for inference when status is missing
+// Infer whether the *source* SGV is in mmol (typical mmol range ≤ 40)
+function inferSourceIsMmol(sgvRaw) {
+  const n = toNumber(sgvRaw);
+  return Number.isFinite(n) && n > 0 && n <= 40;
+}
+
+// Looks-like helper for last-resort units inference
 function looksLikeMmol(n) { return Number.isFinite(n) && n > 0 && n <= 40; }
 
 // Units selection: FORCE_MMOL > NIGHTSCOUT_UNITS secret > status > inference(sgv)
@@ -119,21 +126,22 @@ function deriveUnits(status, sgvRaw) {
   return u;
 }
 
-// Symmetric smart formatting: convert only when the numeric looks like the other unit
-function formatBGSmart(valueRaw, outUnits) {
+// Format BG/Δ using a *single* source-unit inference from SGV
+function formatBGFromSource(valueRaw, outUnits, sourceIsMmol) {
   const n = toNumber(valueRaw);
   if (!Number.isFinite(n)) return String(valueRaw ?? "?");
 
   if (outUnits === "mmol/L") {
-    const mmol = n > 40 ? (n / MGDL_PER_MMOLL) : n;
+    const mmol = sourceIsMmol ? n : (n / MGDL_PER_MMOLL);
     return mmol.toFixed(1);
   } else {
-    const mgdl = n <= 40 ? (n * MGDL_PER_MMOLL) : n;
+    // mg/dL
+    const mgdl = sourceIsMmol ? (n * MGDL_PER_MMOLL) : n;
     return String(Math.round(mgdl));
   }
 }
 
-function formatDeltaSmart(deltaRaw, outUnits) {
+function formatDeltaFromSource(deltaRaw, outUnits, sourceIsMmol) {
   if (deltaRaw == null || deltaRaw === "") return "";
   const s = String(deltaRaw).trim();
   const signIn = (s[0] === "+" || s[0] === "-") ? s[0] : "";
@@ -141,13 +149,12 @@ function formatDeltaSmart(deltaRaw, outUnits) {
   if (!Number.isFinite(n)) return String(deltaRaw);
 
   if (outUnits === "mmol/L") {
-    // mg/dL deltas are often > ~3.5; convert only if it looks like mg/dL
-    const mmol = Math.abs(n) > 3.5 ? (n / MGDL_PER_MMOLL) : n;
+    const mmol = sourceIsMmol ? n : (n / MGDL_PER_MMOLL);
     const sign = signIn || (mmol >= 0 ? "+" : "-");
     return `${sign}${Math.abs(mmol).toFixed(1)}`;
   } else {
-    // mg/dL output; convert up if it looks like mmol (<= ~3.5)
-    const mgdl = Math.abs(n) <= 3.5 ? (n * MGDL_PER_MMOLL) : n;
+    // mg/dL
+    const mgdl = sourceIsMmol ? (n * MGDL_PER_MMOLL) : n;
     const sign = signIn || (mgdl >= 0 ? "+" : "-");
     return `${sign}${Math.round(Math.abs(mgdl))}`;
   }
@@ -158,14 +165,15 @@ try {
   const [data, status] = await Promise.all([getJSON(pebbleURL), getStatus()]);
 
   const bg0 = (data?.bgs && data.bgs[0]) || {};
-  const units = deriveUnits(status, bg0.sgv);
-  const tz = resolveTimezone(status);
-
-  const sgvRaw = bg0.sgv ?? "?";
+  const sgvRaw   = bg0.sgv ?? "?";
   const deltaRaw = bg0.bgdelta ?? "";
-  const trend = bg0.trend ?? bg0.direction;
+  const units    = deriveUnits(status, sgvRaw);
+  const tz       = resolveTimezone(status);
 
-  // ASCII-only trend map (for old devices)
+  // Infer source units once from SGV and use for both BG and Δ
+  const sourceIsMmol = inferSourceIsMmol(sgvRaw);
+
+  // ASCII-only trend map (for very old devices)
   const tmap = {
     1: "v",
     2: "v>",
@@ -180,6 +188,7 @@ try {
     SingleUp: "^",
     DoubleUp: "^^"
   };
+  const trend = bg0.trend ?? bg0.direction;
   const arrow = tmap[trend] || (typeof trend === "string" ? trend : "");
 
   const ts = toNumber(bg0.datetime ?? bg0.readingDate);
@@ -189,11 +198,16 @@ try {
     age = `${mins}m ago`;
   }
 
-  const sgvDisplay = formatBGSmart(sgvRaw, units);
-  const deltaDisplay = formatDeltaSmart(deltaRaw, units);
+  const sgvDisplay   = formatBGFromSource(sgvRaw,  units, sourceIsMmol);
+  const deltaDisplay = formatDeltaFromSource(deltaRaw, units, sourceIsMmol);
   const battery = data?.status?.device?.battery ?? data?.status?.battery ?? "?";
 
-  console.log("DEBUG SGV raw:", sgvRaw, "→", sgvDisplay, units, "| Δ raw:", deltaRaw, "→", deltaDisplay);
+  console.log(
+    "DEBUG units(out):", units,
+    "sourceIsMmol:", sourceIsMmol,
+    "| SGV raw→", sgvRaw, "=>", sgvDisplay,
+    "| Δ raw→", deltaRaw, "=>", deltaDisplay
+  );
 
   const stamp = moment()
     .tz(tz && moment.tz.zone(tz) ? tz : "UTC")
