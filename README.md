@@ -63,5 +63,5 @@ FOR EXAMPLE, MINE: https://djzeratul.github.io/ns-pebble-plain/
 ```
 
 * Pure HTML, no CSS or JS.
-* Auto-refreshes every 60s (via `<meta refresh>`). Cache-buster since github likes to cache stuff even if it has changed.
+* Auto-refreshes every 60s (via `<meta refresh>`). Cache-buster since github likes to cache stuff even if it has changed. The Cache Buster will reload the page with a ?r=####### query string appended to tell github to pull from the page on origin instead of cache. If you refresh the page and expect to see new data, you can change the random numerals at the end of the equal sign to a different string and it will update from origin.
 * Works in Opera Mini / very old phones.
