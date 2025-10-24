@@ -25,21 +25,21 @@ https://<your-username>.github.io/ns-pebble-plain/
 ### `.github/workflows/update.yml`
 
 
-## 4) Add your Nightscout URL and Token as Secrets
+## 4) Add your Nightscout URL and Token, or Optional Secrets
 
 Repo → **Settings → Secrets and variables → Actions → New repository secret**
 
 * Name: `NIGHTSCOUT_URL`
 * Value: `https://YOUR-NIGHTSCOUT-HOST` (the same host you use for `/pebble`)
 * Name: `NIGHTSCOUT_TOKEN`
-* Value: The token used for read access to your nightscout data, if applicable
+* Value: Optional, but required for private sites - The token used for read access to your nightscout data, if applicable.
 * Make sure to add your token that generally looks like `?token=readonly-token-goes-here` if you have your nightscout set to private... simply add the token after the equal sign.
 * Name: `NIGHTSCOUT_TZ`
-* Value: IATA Standard Time Zone for fallback in case it pulls UTC for you. EXAMPLE: `America/Los_Angeles`
+* Value: Optional: IATA Standard Time Zone for fallback in case it does not pull your profile TZ. EXAMPLE: `America/Los_Angeles`
 * Name: `FORCE_MMOL`
-* Value: Boolean `true` or `false`, in case you have MG/DL and you want MMOL, you can force it on here by adding a secret.
-* Name: NIGHTSCOUT_UNITS
-* Value: (optional: `mmol` or `mgdl`) use this if it doesnt give you the right units display.
+* Value: Optional: Boolean `true` or `false`, in case you have MG/DL and you want MMOL, you can force it on here by adding a secret.
+* Name: `NIGHTSCOUT_UNITS`
+* Value: Optional: `mmol` or `mgdl`, use this if it doesnt give you the right units display.
 
 ## 5) Enable workflows
 
