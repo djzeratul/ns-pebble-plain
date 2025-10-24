@@ -1,8 +1,12 @@
-# 1) Make a public repo, fork this one if you want
+# NS Pebble Plain
+
+Builds a plain html file with the JSON data from your nightscout's pebble endpoint, for display on incredibly old browsers or whatever you want to do with the data.
+
+## 1) Make a public repo, fork this one if you want
 
 Name it something like `ns-pebble-plain`.
 
-# 2) Enable GitHub Pages
+## 2) Enable GitHub Pages
 
 Repo → **Settings → Pages**
 
@@ -14,14 +18,14 @@ Repo → **Settings → Pages**
 https://<your-username>.github.io/ns-pebble-plain/
 ```
 
-# 3) Add these files from this repository:
+## 3) Add these files from this repository:
 
 ### `package.json`
 ### `scripts/build.js`
 ### `.github/workflows/update.yml`
 
 
-# 4) Add your Nightscout URL and Token as Secrets
+## 4) Add your Nightscout URL and Token as Secrets
 
 Repo → **Settings → Secrets and variables → Actions → New repository secret**
 
@@ -37,19 +41,19 @@ Repo → **Settings → Secrets and variables → Actions → New repository sec
 * Name: NIGHTSCOUT_UNITS
 * Value: (optional: `mmol` or `mgdl`) use this if it doesnt give you the right units display.
 
-# 5) Enable workflows
+## 5) Enable workflows
 
 * Go to Actions > Workflows > Build plain pebble page and "go ahead and enable them".
 * The workflow can be viewed and edited at /.github/workflows/update.yml
 * Make sure the workflow gets set to enabled, otherwise your data will not update.
 
-# 6) Push to main
+## 6) Push to main
 
 Commit all files and push. Pages publishes the site; the Action will refresh `index.html` every ~5 minutes.
 
 ---
 
-## Use it on the old browser
+### Use it on the old browser
 
 Open:
 
