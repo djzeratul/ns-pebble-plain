@@ -62,5 +62,5 @@ https://<your-username>.github.io/ns-pebble-plain/
 ```
 
 * Pure HTML, no CSS or JS.
-* Auto-refreshes every 60s (via `<meta refresh>`).
+* Auto-refreshes every 60s (via `<meta refresh>`). Cache-buster since github likes to cache stuff even if it has changed.
 * Works in Opera Mini / very old phones.
