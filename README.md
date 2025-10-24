@@ -40,6 +40,8 @@ Repo → **Settings → Secrets and variables → Actions → New repository sec
 # 5) Enable workflows
 
 * Go to Actions > Workflows > Build plain pebble page and "go ahead and enable them".
+* The workflow can be viewed and edited at /.github/workflows/update.yml
+* Make sure the workflow gets set to enabled, otherwise your data will not update.
 
 # 6) Push to main
 
@@ -58,9 +60,3 @@ https://<your-username>.github.io/ns-pebble-plain/
 * Pure HTML, no CSS or JS.
 * Auto-refreshes every 60s (via `<meta refresh>`).
 * Works in Opera Mini / very old phones.
-
----
-
-
-
-Want me to pre-fill these files with your GitHub username and a sample Nightscout URL so you can just paste them?
