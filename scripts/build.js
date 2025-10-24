@@ -1,6 +1,6 @@
 // Build a minimal, token-optional Nightscout /pebble HTML page
 // Ultra-compatible: ASCII arrows, cache-busting, robust TZ, smart unit handling.
-// Delta conversion is tied to SGV-inferred source units to avoid wrong ×18.
+// Delta conversion is tied to SGV-inferred source units to avoid wrong units.
 
 import fs from "node:fs/promises";
 import moment from "moment-timezone";
@@ -237,13 +237,13 @@ Updated: ${stamp} (${tz || "UTC"})
 </html>`;
 
   await fs.writeFile("index.html", html, "utf8");
-  console.log(`✅ Built index.html from ${pebbleURL} [${tz || "UTC"}] [${units}]`);
+  console.log(`Built index.html from ${pebbleURL} [${tz || "UTC"}] [${units}]`);
 } catch (err) {
   const msg = String(err?.message || err);
   const fallback = `<!doctype html><meta charset="utf-8"><pre>Build error: ${msg}
 Source: ${pebbleURL}
 </pre>`;
   await fs.writeFile("index.html", fallback, "utf8");
-  console.error("⚠️ Build failed:", msg);
+  console.error("Build failed:", msg);
   process.exitCode = 0;
 }
